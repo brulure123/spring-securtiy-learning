@@ -1,10 +1,13 @@
 package com.example.learning.security;
 
 import lombok.Getter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.learning.security.ApplicationUserPermission.*;
 
@@ -20,5 +23,13 @@ public enum ApplicationUserRole {
 
     ApplicationUserRole(List<ApplicationUserPermission> permissions) {
         this.permissions = permissions;
+    }
+
+    public List<SimpleGrantedAuthority> getGrantedAuthorities() {
+        List<SimpleGrantedAuthority> permissions = getPermissions().stream()
+                .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
+                .collect(Collectors.toList());
+        permissions.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+        return permissions;
     }
 }
