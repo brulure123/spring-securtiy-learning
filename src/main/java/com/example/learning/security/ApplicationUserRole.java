@@ -13,12 +13,8 @@ public enum ApplicationUserRole {
 
     // TODO: Replace Collections List with Sets for avoiding duplication
     STUDENT(Collections.emptyList()),
-    ADMIN(Arrays.asList(
-            COURSE_READ,
-            COURSE_WRITE,
-            STUDENT_READ,
-            STUDENT_WRITE
-    ));
+    ADMIN(Arrays.asList(COURSE_READ, COURSE_WRITE, STUDENT_READ, STUDENT_WRITE)),
+    ADMIN_TRAINEE(Arrays.asList(COURSE_READ, STUDENT_READ));
 
     private final List<ApplicationUserPermission> permissions;
 
