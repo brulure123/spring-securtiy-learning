@@ -30,6 +30,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
+                .antMatchers("/api/**").hasRole(STUDENT.name()) //Role Based Auth using here.
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -49,7 +50,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetails linda = User.builder()
                 .username("linda")
                 .password(passwordEncoder.encode("password123"))
-                .roles(ADMIN.name()) // ROLE_STUDENT
+                .roles(ADMIN.name()) // ROLE_ADMIN
                 .build();
 
         return  new InMemoryUserDetailsManager(
