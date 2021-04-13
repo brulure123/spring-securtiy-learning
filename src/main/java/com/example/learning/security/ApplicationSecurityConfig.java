@@ -35,14 +35,15 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http
 //                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                .and()
-                .csrf().disable()
+                .csrf()
+                    .disable()
                 .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
-                .antMatchers("/api/**").hasRole(STUDENT.name()) //Role Based Auth using here.
-                .anyRequest()
-                .authenticated()
-                .and()
-                .httpBasic();
+                    .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
+                    .antMatchers("/api/**").hasRole(STUDENT.name()) //Role Based Auth using here.
+                    .anyRequest()
+                    .authenticated()
+                    .and()
+                .formLogin();
     }
 
     @Override
