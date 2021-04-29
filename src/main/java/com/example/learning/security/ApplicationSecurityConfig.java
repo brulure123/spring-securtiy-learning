@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
+import java.util.concurrent.TimeUnit;
+
 import static com.example.learning.security.ApplicationUserRole.*;
 import static com.example.learning.security.ApplicationUserPermission.*;
 
@@ -47,7 +49,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                     .loginPage("/login").permitAll()
                     .defaultSuccessUrl("/courses", true)
                     .and()
-                .rememberMe(); // By default the remember me is for two weeks
+                .rememberMe() // By default the remember me is for two weeks
+                    .tokenValiditySeconds((int)TimeUnit.SECONDS.toSeconds(21))
+                    .key("somethingverysecured"); // By default the key is the md5 of username and duration of the remember me.
     }
 
     @Override
