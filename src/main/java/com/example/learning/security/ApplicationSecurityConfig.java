@@ -49,10 +49,13 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                     .loginPage("/login").permitAll()
                     .defaultSuccessUrl("/courses", true)
+                    .usernameParameter("pseudo") // Help to override default value (username)
+                    .passwordParameter("mot-de-passe") // default (password)
                     .and()
                 .rememberMe() // By default the remember me is for two weeks
                     .tokenValiditySeconds((int)TimeUnit.SECONDS.toSeconds(21))
                     .key("somethingverysecured") // By default the key is the md5 of username and duration of the remember me.
+                    .rememberMeParameter("connexion") // default (rememeber-me)
                     .and()
                 .logout()
                     .logoutUrl("/logout")
