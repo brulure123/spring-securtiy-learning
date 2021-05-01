@@ -1,9 +1,12 @@
 package com.example.learning.security;
 
+import com.example.learning.auth.ApplicationUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,10 +30,12 @@ import static com.example.learning.security.ApplicationUserPermission.*;
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationUserService applicationUserService;
 
     @Autowired
-    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder) {
+    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, ApplicationUserService applicationUserService) {
         this.passwordEncoder = passwordEncoder;
+        this.applicationUserService = applicationUserService;
     }
 
     @Override
@@ -68,35 +73,15 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(this.daoAuthenticationProvider());
+    }
+
     @Bean
-    protected UserDetailsService userDetailsService() {
-
-        UserDetails annaSmith = User.builder()
-                .username("annasmith")
-                .password(passwordEncoder.encode("password"))
-//                .roles(STUDENT.name()) // ROLE_STUDENT
-                .authorities(STUDENT.getGrantedAuthorities())
-                .build();
-
-        UserDetails linda = User.builder()
-                .username("linda")
-                .password(passwordEncoder.encode("password123"))
-//                .roles(ADMIN.name()) // ROLE_ADMIN
-                .authorities(ADMIN.getGrantedAuthorities())
-                .build();
-
-        UserDetails tom = User.builder()
-                .username("tom")
-                .password(passwordEncoder.encode("password123"))
-//                .roles(ADMIN_TRAINEE.name()) // ROLE_ADMIN_TRAINEE
-                .authorities(ADMIN_TRAINEE.getGrantedAuthorities())
-                .build();
-
-        return  new InMemoryUserDetailsManager(
-                annaSmith,
-                linda,
-                tom
-        );
-
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(applicationUserService);
+        return  provider;
     }
 }
