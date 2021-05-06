@@ -1,6 +1,7 @@
 package com.example.learning.security;
 
 import com.example.learning.auth.ApplicationUserService;
+import com.example.learning.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -45,31 +47,15 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and()
                 .csrf()
                     .disable()
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
                 .authorizeRequests()
                     .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                     .antMatchers("/api/**").hasRole(STUDENT.name()) //Role Based Auth using here.
                     .anyRequest()
-                    .authenticated()
-                    .and()
-                .formLogin()
-                    .loginPage("/login").permitAll()
-                    .defaultSuccessUrl("/courses", true)
-                    .usernameParameter("pseudo") // Help to override default value (username)
-                    .passwordParameter("mot-de-passe") // default (password)
-                    .and()
-                .rememberMe() // By default the remember me is for two weeks
-                    .tokenValiditySeconds((int)TimeUnit.SECONDS.toSeconds(21))
-                    .key("somethingverysecured") // By default the key is the md5 of username and duration of the remember me.
-                    .rememberMeParameter("connexion") // default (rememeber-me)
-                    .and()
-                .logout()
-                    .logoutUrl("/logout")
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-                    .clearAuthentication(true)
-                    .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID", "remember-me")
-                    .logoutSuccessUrl("/login");
-                    
+                    .authenticated();
     }
 
     @Override
