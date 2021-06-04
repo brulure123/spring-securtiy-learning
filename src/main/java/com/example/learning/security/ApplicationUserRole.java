@@ -12,7 +12,6 @@ import static com.example.learning.security.ApplicationUserPermission.*;
 @Getter
 public enum ApplicationUserRole {
 
-    // TODO: Replace Collections List with Sets for avoiding duplication
     STUDENT(Sets.newHashSet()),
     ADMIN(Sets.newHashSet(COURSE_READ, COURSE_WRITE, STUDENT_READ, STUDENT_WRITE)),
     ADMIN_TRAINEE(Sets.newHashSet(COURSE_READ, STUDENT_READ));
